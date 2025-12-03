@@ -1,0 +1,4 @@
+# Placeholder requirements for the template
+# CrewAI is not required until the real example is added
+# MachineID.io example client is not included yet
+
