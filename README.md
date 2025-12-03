@@ -12,7 +12,7 @@ Run a CrewAI fleet with hard registration caps and per-agent validation — no c
 
 ```bash
 pip install crewai machineid
-export MACHINEID_ORG_KEY=mid_********************************
+export MACHINEID_ORG_KEY=org_your_key_here
 python agent.py
 ```
 
