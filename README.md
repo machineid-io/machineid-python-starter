@@ -1,40 +1,36 @@
-CrewAI + MachineID.io Template
+# CrewAI + MachineID.io Template
 
 Run a CrewAI fleet with hard registration caps and per-agent validation — no custom database or auth required.
 
-Why use this
+## Why use this
 
-Automatically block new agents when you hit your plan limit (3 / 25 / 250 / 1000)
+- Automatically block new agents when you hit your plan limit (3 / 25 / 250 / 1000)
+- Prevent runaway OpenAI bills and agent swarms
+- No extra infrastructure or databases to manage
 
-Prevent runaway OpenAI bills and agent swarms
-
-No extra infrastructure or databases to manage
-
-Quick start (3 steps)
+## Quick start (3 steps)
 
 pip install crewai machineid
+
 export MACHINEID_ORG_KEY=org_your_org_key_here
+
 python agent.py
 
 That’s it — the first agent registers itself, and each cycle validates against MachineID.io.
 
-How it works
+## How it works
 
-On startup → agent calls /devices/register (idempotent)
+1. On startup → agent calls /devices/register (idempotent)
+2. Each loop → agent calls /devices/validate
+3. When limit is reached → registration or validation fails and the agent exits cleanly
 
-Each loop → agent calls /devices/validate
+## Files in this repo
 
-When limit is reached → registration or validation fails and the agent exits cleanly
+- agent.py – placeholder example for CrewAI + MachineID.io integration
+- .env.example – put your MachineID.io org key here
+- requirements.txt – Python dependencies
 
-Files in this repo
-
-agent.py – placeholder example for CrewAI + MachineID.io integration
-
-.env.example – put your MachineID.io org key here
-
-requirements.txt – Python dependencies
-
-Links
+## Links
 
 Dashboard → https://machineid.io/dashboard
 
