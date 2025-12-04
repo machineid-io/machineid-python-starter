@@ -1,75 +1,133 @@
-# CrewAI + MachineID.io Template
+# MachineID.io Python Starter Template
 
-Run a CrewAI agent (or any Python automation) with hard device limits and safe validation checks — no database, no auth system, no infrastructure required.
+A minimal, universal starting point for adding MachineID.io device registration and validation to any Python-based agent or script.
 
-MachineID.io gives every agent a unique device identity and enforces your plan’s device cap (3 free, higher limits on paid plans).
+Use this starter to prevent runaway fleets, enforce hard device limits, and ensure every agent checks in before doing work.  
+The free org key supports up to **3 devices**, with higher limits available on paid plans.
 
-## 0. Get your free org key (recommended)
+---
 
-1. Visit https://machineid.io
-2. Click "Generate free org key"
-3. Copy the key (looks like org_...)
-4. Set it in your shell:
+## What this repo gives you
 
-export MACHINEID_ORG_KEY=org_your_key_here
+- A tiny Python script (`agent.py`) that:
+  - Reads `MACHINEID_ORG_KEY` from the environment
+  - Calls `/api/v1/devices/register` with `x-org-key` and a `deviceId`
+  - Calls `/api/v1/devices/validate` before running
+  - Prints clear status:
+    - ok / exists / restored  
+    - limit_reached (free tier = 3 devices)  
+    - allowed / not allowed
+- A minimal `requirements.txt` using only `requests`
+- A pattern suitable for:
+  - CrewAI agents
+  - OpenAI Swarm workers
+  - LangChain / LCEL chains
+  - Custom agent loops
+  - Cron jobs or background workers
 
-Or put it in a .env file:
+This is the base template all other MachineID.io examples build on.
 
-MACHINEID_ORG_KEY=org_your_key_here
+---
 
-This key is sent in the x-org-key header for all requests.
+## Quick start
 
-## Advanced: create an org from your backend or agent
+1. Clone this repo or click **“Use this template.”**
 
-Agents or backends can create a free org using:
+2. Install dependencies:
+
+   pip install -r requirements.txt
+
+3. Get a free org key (supports 3 devices):  
+   - Visit https://machineid.io  
+   - Click **“Generate free org key”**  
+   - Copy the key (it begins with `org_...`)
+
+4. Export your org key:
+
+   export MACHINEID_ORG_KEY=org_your_org_key_here
+
+5. Run the starter:
+
+   python agent.py
+
+You’ll see a register call, a validate call, and a summary of whether this device is allowed.
+
+---
+
+## How the script works
+
+1. Reads `MACHINEID_ORG_KEY` from the environment.  
+2. Uses a default `deviceId` of `agent-01`.  
+3. Calls `/api/v1/devices/register`:
+   - `ok` → new device created  
+   - `exists` → device already registered  
+   - `restored` → previously revoked device restored  
+   - `limit_reached` → free tier cap hit  
+4. Calls `/api/v1/devices/validate`:
+   - `allowed: true` → agent should run  
+   - `allowed: false` → agent should stop or pause  
+
+This is the exact control cycle used by real fleets.
+
+---
+
+## Using this in your own agents
+
+To integrate with MachineID.io:
+
+- Call **register** when the agent starts.  
+- Call **validate**:
+  - Before each major task, or  
+  - On a time interval for long-running agents.  
+- Only continue when `allowed` is true.  
+
+This prevents accidental over-scaling and uncontrolled agent spawning.
+
+---
+
+## Advanced: create orgs programmatically (optional)
+
+Most humans generate a free org key from the dashboard.
+
+Fully automated backends or meta-agents may instead call:
+
+POST /api/v1/org/create
+
+Example:
 
 curl -s https://machineid.io/api/v1/org/create \
   -H "Content-Type: application/json" \
-  -d '{}' | jq
+  -d '{}'
 
-Copy the orgApiKey from the response and set:
+The response includes an `orgApiKey` that works exactly like dashboard-created keys.
 
-export MACHINEID_ORG_KEY=org_...from_response...
-
-## Free tier
-
-This template runs on the free plan (3 devices).
-
-If you exceed the limit, MachineID.io returns:
-
-status = limit_reached
-
-Upgrade to unlock 25, 250, or 1000 devices using your existing checkout flow (via dashboard or your backend). Agents can follow the same pattern programmatically.
-
-## Quick start (3 steps)
-
-pip install -r requirements.txt
-
-export MACHINEID_ORG_KEY=org_your_key_here
-
-python agent.py
-
-The script will:
-1. Register device agent-01
-2. Validate it
-3. Show allowed / denied status
-
-## How it works
-
-- Startup → calls /devices/register
-- Each loop → calls /devices/validate
-- When limit is reached → allowed = false or status = limit_reached
+---
 
 ## Files in this repo
 
-- agent.py – working MachineID.io example
-- requirements.txt – Python dependencies
-- LICENSE – MIT license
+- `agent.py` — Universal Python starter (register + validate)  
+- `requirements.txt` — Minimal dependency (`requests`)  
+- `LICENSE` — MIT licensed  
+
+Optional `.env` pattern:
+
+MACHINEID_ORG_KEY=org_your_org_key_here
+
+---
 
 ## Links
 
-Dashboard → https://machineid.io/dashboard
+Dashboard → https://machineid.io/dashboard  
+Generate free org key → https://machineid.io  
+Docs → https://machineid.io/docs  
+API → https://machineid.io/api  
 
-Documentation → https://machineid.io/docs
+---
+
+## How plans work (quick overview)
+
+- Plans are per **org**, each with its own `orgApiKey`.  
+- Device limits apply to unique `deviceId` values registered via `/devices/register`.  
+- When you upgrade or change plans in Stripe, limits update immediately — **your agents do not need new code**.
 
 MIT licensed · Built by MachineID.io
