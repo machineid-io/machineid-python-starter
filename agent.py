@@ -102,7 +102,7 @@ def main() -> None:
     print()
 
     if reg_status == "limit_reached":
-        print("🚫 Plan limit reached on register. This is what your agents should treat as 'do not start'.")
+        print("🚫 Plan limit reached on register. Your agents should treat this as 'do not start'.")
         sys.exit(0)
 
     # 2) Validate once
@@ -120,9 +120,9 @@ def main() -> None:
     print()
 
     if allowed:
-        print("✅ Device is allowed. In a real CrewAI agent, this is where you would start or continue work.")
+        print("✅ Device is allowed. In a real agent or worker, this is where you would start or continue work.")
     else:
-        print("🚫 Device is NOT allowed. In a real agent, you should exit or pause here.")
+        print("🚫 Device is NOT allowed. In a real agent or worker, you should exit or pause here.")
 
     print()
     print("Done. agent.py completed successfully.")
