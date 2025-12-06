@@ -18,7 +18,7 @@ def get_org_key() -> str:
             "Example:\n"
             "  export MACHINEID_ORG_KEY=org_your_key_here\n"
         )
-    return org_key
+    return org_key.strip()
 
 
 def register_device(org_key: str, device_id: str) -> Dict[str, Any]:
@@ -123,6 +123,7 @@ def main() -> None:
         print("✅ Device is allowed. In a real agent or worker, this is where you would start or continue work.")
     else:
         print("🚫 Device is NOT allowed. In a real agent or worker, you should exit or pause here.")
+        # sys.exit(0)  # Uncomment if you want the starter to actually exit on disallowed
 
     print()
     print("Done. agent.py completed successfully.")
