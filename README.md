@@ -137,7 +137,6 @@ MACHINEID_ORG_KEY=org_your_org_key_here
 Dashboard → https://machineid.io/dashboard  
 Generate free org key → https://machineid.io  
 Docs → https://machineid.io/docs  
-API → https://machineid.io/api  
 
 ---
 
