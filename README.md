@@ -84,15 +84,18 @@ You'll see a register call, a validate call, and a summary showing whether this 
 ## How the script works
 
 1. Reads `MACHINEID_ORG_KEY` from the environment  
-2. Uses a default `deviceId` of `agent-01`  
+2. Uses a default `deviceId` of `python-starter:01`
+   -  You may override this by setting MACHINEID_DEVICE_ID.
 3. Calls `/api/v1/devices/register`:
-   - `ok` → new device created  
-   - `exists` → device already registered  
-   - `restored` → previously revoked device restored  
-   - `limit_reached` → free tier cap hit  
+   - ok → new device created  
+   - exists → device already registered  
+   - error → registration failed (including revoked devices or plan limits)
+ 
 4. Calls `/api/v1/devices/validate`:
-   - `allowed: true` → agent should run  
-   - `allowed: false` → agent should stop or pause  
+   - allowed: true  → execution may continue  
+   - allowed: false → execution must stop immediately  
+     (decision is identified by `code` and `request_id`)
+
 
 This simple cycle prevents uncontrolled scaling and mirrors the behavior of real production fleets.
 
